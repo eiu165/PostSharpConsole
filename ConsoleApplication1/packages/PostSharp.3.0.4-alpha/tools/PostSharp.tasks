@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Import Project="PostSharp.properties"/>
+  
+  <!-- Import project overrides -->
+  <Import Project="$(MSBuildProjectDirectory)\..\..\..\..\..\..\..\..\PostSharp.Custom.targets" Condition="Exists('$(MSBuildProjectDirectory)\..\..\..\..\..\..\..\..\PostSharp.Custom.targets')"/>
+  <Import Project="$(MSBuildProjectDirectory)\..\..\..\..\..\..\..\PostSharp.Custom.targets" Condition="Exists('$(MSBuildProjectDirectory)\..\..\..\..\..\..\..\PostSharp.Custom.targets')"/>
+  <Import Project="$(MSBuildProjectDirectory)\..\..\..\..\..\..\PostSharp.Custom.targets" Condition="Exists('$(MSBuildProjectDirectory)\..\..\..\..\..\..\PostSharp.Custom.targets')"/>
+  <Import Project="$(MSBuildProjectDirectory)\..\..\..\..\..\PostSharp.Custom.targets" Condition="Exists('$(MSBuildProjectDirectory)\..\..\..\..\..\PostSharp.Custom.targets')"/>
+  <Import Project="$(MSBuildProjectDirectory)\..\..\..\..\PostSharp.Custom.targets" Condition="Exists('$(MSBuildProjectDirectory)\..\..\..\..\PostSharp.Custom.targets')"/>
+  <Import Project="$(MSBuildProjectDirectory)\..\..\..\PostSharp.Custom.targets" Condition="Exists('$(MSBuildProjectDirectory)\..\..\..\PostSharp.Custom.targets')"/>
+  <Import Project="$(MSBuildProjectDirectory)\..\..\PostSharp.Custom.targets" Condition="Exists('$(MSBuildProjectDirectory)\..\..\PostSharp.Custom.targets')"/>
+  <Import Project="$(MSBuildProjectDirectory)\..\PostSharp.Custom.targets" Condition="Exists('$(MSBuildProjectDirectory)\..\PostSharp.Custom.targets')"/>
+  <Import Project="$(MSBuildProjectDirectory)\PostSharp.Custom.targets" Condition="Exists('$(MSBuildProjectDirectory)\PostSharp.Custom.targets')"/>
+
+  <PropertyGroup>
+    <_PostSharp30ImportedTwice Condition="'$(PostSharp30Imported)'=='True'">True</_PostSharp30ImportedTwice>
+    <PostSharp30Imported>True</PostSharp30Imported>
+
+    <!-- Determines whether a PostSharp project is named after the principal project. -->
+    <PostSharp30Project Condition=" '$(PostSharp30Project)'=='' AND Exists('$(MSBuildProjectDirectory)\$(MSBuildProjectName).$(Configuration).$(Platform).psproj') ">$(MSBuildProjectDirectory)\$(MSBuildProjectName).$(Configuration).$(Platform).psproj</PostSharp30Project>
+    <PostSharp30Project Condition=" '$(PostSharp30Project)'=='' AND Exists('$(MSBuildProjectDirectory)\$(MSBuildProjectName).$(Configuration).psproj') ">$(MSBuildProjectDirectory)\$(MSBuildProjectName).$(Configuration).psproj</PostSharp30Project>
+    <PostSharp30Project Condition=" '$(PostSharp30Project)'=='' AND Exists('$(MSBuildProjectDirectory)\$(MSBuildProjectName).psproj') ">$(MSBuildProjectDirectory)\$(MSBuildProjectName).psproj</PostSharp30Project>
+
+    <!-- PostSharp properties -->
+    <PostSharpBuild Condition="'$(PostSharpBuild)'==''">Release</PostSharpBuild>
+    <PostSharpIgnoreError Condition="'$(PostSharpIgnoreError)'==''">False</PostSharpIgnoreError>
+    <PostSharpFailOnUnexpectedMessage Condition="'$(PostSharpFailOnUnexpectedMessage)'==''">False</PostSharpFailOnUnexpectedMessage>
+    <PostSharpIntermediateDirectory Condition="'$(PostSharpIntermediateDirectory)'==''">$(IntermediateOutputPath)PostSharp</PostSharpIntermediateDirectory>
+    <PostSharpBackupDirectory Condition="'$(PostSharpBackupDirectory)'==''">$(IntermediateOutputPath)Before-PostSharp</PostSharpBackupDirectory>
+    <PostSharpCleanIntermediate Condition="'$(PostSharpCleanIntermediate)'==''">False</PostSharpCleanIntermediate>
+    <PostSharpSignAssembly Condition="'$(PostSharpSignAssembly)'=='' AND '$(SignAssembly)'!=''">$(SignAssembly)</PostSharpSignAssembly>
+    <PostSharpSignAssembly Condition="'$(PostSharpSignAssembly)'==''">False</PostSharpSignAssembly>
+    <PostSharpAttachDebugger Condition="'$(PostSharpAttachDebugger)'==''">False</PostSharpAttachDebugger>
+    <PostSharpWriteWeavingSymbols Condition="'$(PostSharpWriteWeavingSymbols)'==''">True</PostSharpWriteWeavingSymbols>
+    <PostSharpSymbolFile Condition="'$(PostSharpSymbolFile)'==''">$(OutDir)$(AssemblyName).pssym</PostSharpSymbolFile>
+    <PostSharpClientAttachDebugger Condition="'$(PostSharpClientAttachDebugger)'==''">False</PostSharpClientAttachDebugger>
+    <PostSharpTargetFrameworkVersion Condition="'$(PostSharpTargetFrameworkVersion)'=='' OR '$(PostSharpTargetFrameworkVersion)'=='2.0' ">4.0</PostSharpTargetFrameworkVersion>
+    <PostSharpTargetProcessor Condition="'$(PostSharpTargetProcessor)'=='' AND ( '$(PlatformTarget)'=='AMD64' OR '$(PlatformTarget)'=='x64')">x64</PostSharpTargetProcessor>
+    <PostSharpTargetProcessor Condition="'$(PostSharpTargetProcessor)'==''">x86</PostSharpTargetProcessor>
+    <PostSharpTargetPlatform Condition="'$(PostSharpTargetPlatform)'==''">$(PostSharpTargetFrameworkVersion)-$(PostSharpTargetProcessor)</PostSharpTargetPlatform>
+    <PostSharpOptimizationMode Condition="'$(PostSharpOptimizationMode)'=='' AND '$(Optimize)'!='True'">OptimizeForBuildTime</PostSharpOptimizationMode>
+    <PostSharpOptimizationMode Condition="'$(PostSharpOptimizationMode)'==''">OptimizeForSize</PostSharpOptimizationMode>
+    <PostSharpUseHardLink Condition="'$(PostSharpUseHardLink)'==''">True</PostSharpUseHardLink>
+    <PostSharpHost Condition="'$(PostSharpHost)'=='' AND '$(PostSharpUsePipeServer)'=='False'">Native</PostSharpHost>
+    <PostSharpHost Condition="'$(PostSharpHost)'==''">PipeServer</PostSharpHost>
+    <PostSharpObfuscationAwarenessEnabled Condition="'$(PostSharpObfuscationAwarenessEnabled)'==''">False</PostSharpObfuscationAwarenessEnabled>
+    <PostSharpConstraintVerificationEnabled Condition="'$(PostSharpConstraintVerificationEnabled)'==''">True</PostSharpConstraintVerificationEnabled>
+    <SkipPostSharp Condition="'$(SkipPostSharp)'==''">False</SkipPostSharp>
+
+    <PostSharp30ToolDirectory Condition="'$(PostSharp30ToolDirectory)'=='' AND Exists('$(MSBuildThisFileDirectory)\bin.$(PostSharpBuild)\PostSharp.MSBuild.v$(PostSharp30Version).$(PostSharpBuild).dll')">$(MSBuildThisFileDirectory)</PostSharp30ToolDirectory>
+    
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(PostSharp30ToolDirectory)'==''">
+    <_PostSharp30ExtractDirectory>$(TEMP)\PostSharp 3.0\$(PostSharp30Version)</_PostSharp30ExtractDirectory>
+    <PostSharp30ToolDirectory>$(_PostSharp30ExtractDirectory)</PostSharp30ToolDirectory>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PostSharp30BinDirectory>$(PostSharp30ToolDirectory)\bin.$(PostSharpBuild)</PostSharp30BinDirectory>
+  </PropertyGroup>
+
+
+  <!-- Import tasks -->
+  <UsingTask	AssemblyFile="$(PostSharp30BinDirectory)\PostSharp.MSBuild.v$(PostSharp30Version).$(PostSharpBuild).dll" TaskName="PostSharp.MSBuild.PostSharp30" />
+  <UsingTask	AssemblyFile="$(PostSharp30BinDirectory)\PostSharp.MSBuild.v$(PostSharp30Version).$(PostSharpBuild).dll" TaskName="PostSharp.MSBuild.PostSharp30TouchWithDelay" />
+  <UsingTask	AssemblyFile="$(PostSharp30BinDirectory)\PostSharp.MSBuild.v$(PostSharp30Version).$(PostSharpBuild).dll" TaskName="PostSharp.MSBuild.PostSharp30CheckPfx" />
+  <UsingTask	AssemblyFile="$(PostSharp30BinDirectory)\PostSharp.MSBuild.v$(PostSharp30Version).$(PostSharpBuild).dll" TaskName="PostSharp.MSBuild.PostSharp30GetDirectory" />
+  <UsingTask	AssemblyFile="$(PostSharp30BinDirectory)\PostSharp.MSBuild.v$(PostSharp30Version).$(PostSharpBuild).dll" TaskName="PostSharp.MSBuild.PostSharp30MoveWithRetry"/>
+  <UsingTask	AssemblyFile="$(PostSharp30BinDirectory)\PostSharp.MSBuild.v$(PostSharp30Version).$(PostSharpBuild).dll" TaskName="PostSharp.MSBuild.PostSharp30CopyWithRetry"/>
+  <UsingTask	AssemblyFile="$(PostSharp30BinDirectory)\PostSharp.MSBuild.v$(PostSharp30Version).$(PostSharpBuild).dll" TaskName="PostSharp.MSBuild.PostSharp30Shutdown"/>
+  <UsingTask	AssemblyFile="$(PostSharp30BinDirectory)\PostSharp.MSBuild.v$(PostSharp30Version).$(PostSharpBuild).dll" TaskName="PostSharp.MSBuild.PostSharp30ParseAssemblyNames"/>
+  <UsingTask	AssemblyFile="$(PostSharp30BinDirectory)\PostSharp.MSBuild.v$(PostSharp30Version).$(PostSharpBuild).dll" TaskName="PostSharp.MSBuild.PostSharp30InstallVsx"/>
+</Project>
